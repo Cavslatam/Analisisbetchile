@@ -5,7 +5,7 @@
 
   const SPORTS = ["football", "basketball", "tennis"];
 
-  async function getMatches(sport, limit = 20) {
+  async function getMatches(sport, limit = 50) {
     if (!SPORTS.includes(sport)) {
       throw new Error("Deporte no disponible");
     }
