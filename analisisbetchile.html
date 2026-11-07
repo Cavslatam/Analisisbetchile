@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f8fa">
+<title>Analisisbetchile | Estadísticas deportivas</title>
+<style>
+:root{--ink:#172033;--muted:#697386;--line:#e7eaf0;--blue:#2457d6;--bg:#f7f8fa;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+.wrap{max-width:1080px;margin:auto;padding:0 18px}
+.top{height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:20px;font-weight:800;letter-spacing:-.6px}.brand span{color:var(--blue)}
+nav{display:flex;gap:8px;overflow:auto;padding:10px 0 14px}
+button{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+main{padding:26px 0 50px}.intro{margin-bottom:22px}.eyebrow{color:var(--blue);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+h1{font-size:clamp(26px,5vw,38px);line-height:1.12;margin:7px 0}.sub{color:var(--muted);margin:8px 0 0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0}
+.panel h2{font-size:18px;margin:0 0 12px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.notice{background:#eef3ff;border:1px solid #d9e4ff;color:#28488f;border-radius:12px;padding:13px 14px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.sport{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}
+.sport h3{margin:0 0 5px;font-size:16px}.sport p{margin:0;color:var(--muted);font-size:14px}
+.empty{color:var(--muted);text-align:center;padding:24px 8px}
+footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+ <div class="top"><div class="brand">ANALISIS<span>BET</span>CHILE</div><div style="color:#697386;font-size:13px">Deporte · Datos · Análisis</div></div>
+ <nav aria-label="Deportes">
+  <button class="active" data-sport="todos">Todos</button><button data-sport="futbol">Fútbol</button><button data-sport="basket">NBA</button><button data-sport="tenis">Tenis</button>
+ </nav>
+</div></header>
+<main class="wrap">
+ <section class="intro"><div class="eyebrow">Plataforma deportiva</div><h1>Entiende el juego con datos.</h1><p class="sub">Resultados, estadísticas y contexto de tus competiciones favoritas.</p></section>
+ <div class="notice"><strong>Versión inicial:</strong> la web ya tiene su estructura visual. Los marcadores y estadísticas en vivo se mostrarán cuando conectemos una fuente de datos deportivos.</div>
+ <section class="panel"><h2>Explora por deporte</h2><div class="grid" id="sports">
+  <article class="sport" data-kind="futbol"><h3>⚽ Fútbol</h3><p>Partidos, posesión, tiros, pases, córners y tarjetas.</p></article>
+  <article class="sport" data-kind="basket"><h3>🏀 NBA</h3><p>Marcadores, puntos, rebotes, asistencias y estadísticas por cuarto.</p></article>
+  <article class="sport" data-kind="tenis"><h3>🎾 Tenis</h3><p>Sets, juegos, aces, dobles faltas y datos de servicio.</p></article>
+ </div></section>
+ <section class="panel"><h2>Partidos y resultados</h2><div class="filters"><button class="active" data-state="todos">Todos</button><button data-state="live">En vivo</button><button data-state="upcoming">Próximos</button><button data-state="finished">Finalizados</button></div><div class="empty" id="empty">Todavía no hay partidos conectados.<br>Estamos preparando la conexión de datos.</div></section>
+ <section class="panel"><h2>Análisis estadístico</h2><p class="sub">Nuestro objetivo es explicar el rendimiento de equipos y deportistas usando datos verificables, comparaciones e historial. Las estimaciones se identificarán claramente y no reemplazarán estadísticas oficiales.</p></section>
+</main>
+<footer><div class="wrap">© 2026 Analisisbetchile · Proyecto deportivo independiente.</div></footer>
+<script>
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const s=b.dataset.sport;document.querySelectorAll('.sport').forEach(c=>c.hidden=s!=='todos'&&c.dataset.kind!==s)}));
+document.querySelectorAll('.filters button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('empty').textContent='Aún no hay partidos disponibles en esta categoría. Conectaremos los datos deportivos próximamente.'}));
+</script>
+</body></html>
