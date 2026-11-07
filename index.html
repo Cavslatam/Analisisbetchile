@@ -137,8 +137,22 @@ footer{text-align:center;padding:30px;color:#94a3b8;font-size:12px}
 
   sports.forEach(s=>{
    (data[s]||[]).forEach(m=>{
-    if(currentState==="all" || statusOf(m)===currentState){
-     list.push({match:m,sport:s});
+    if(currentState==="all" || function statusOf(m){
+  const s = String(get(m,[
+    "status","state","status_text","statusText",
+    "match_status","status_code"
+  ])).toLowerCase().trim();
+
+  if(
+    /live|in.?play|playing|1st half|2nd half|first half|second half|half time|quarter|period|set|en vivo/.test(s)
+  ) return "live";
+
+  if(
+    /finished|full.?time|ended|complete|final|ft|finished/.test(s)
+  ) return "done";
+
+  return "next";
+    }
     }
    });
   });
