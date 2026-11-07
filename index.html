@@ -4,101 +4,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
 <title>AnalisisBetChile | Deportes</title>
-
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f7fa;
-  color:#182230;
-}
-header{
-  background:white;
-  padding:20px;
-  border-bottom:1px solid #e5e9ef;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#182230}
+header{background:white;padding:20px;border-bottom:1px solid #e5e9ef}
 .container{max-width:1050px;margin:auto;padding:0 16px}
 .logo{font-size:25px;font-weight:800;color:#1677df}
 .logo span{color:#172b4d}
 .subtitle{color:#718096;font-size:13px;margin-top:5px}
-nav{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  padding:18px 0;
-}
-button{
-  border:1px solid #dce3eb;
-  background:white;
-  color:#44546a;
-  padding:10px 17px;
-  border-radius:9px;
-  font-weight:600;
-  cursor:pointer;
-  white-space:nowrap;
-}
+nav{display:flex;gap:10px;overflow-x:auto;padding:15px 0}
+button{border:1px solid #dce3eb;background:white;color:#44546a;padding:10px 16px;border-radius:9px;font-weight:600;white-space:nowrap}
 button.active{background:#1677df;color:white;border-color:#1677df}
-h2{font-size:19px;margin:12px 0}
-.status{
-  background:white;
-  padding:13px;
-  border-radius:10px;
-  color:#64748b;
-  font-size:13px;
-  margin-bottom:15px;
-}
-.match{
-  background:white;
-  border:1px solid #e7ebf0;
-  border-radius:12px;
-  padding:16px;
-  margin-bottom:11px;
-}
-.competition{
-  color:#718096;
-  font-size:12px;
-  margin-bottom:13px;
-}
-.teams{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:12px;
-  font-weight:700;
-}
+.status{background:white;padding:13px;border-radius:10px;color:#64748b;font-size:13px;margin-bottom:15px}
+.match{background:white;border:1px solid #e7ebf0;border-radius:12px;padding:16px;margin-bottom:11px}
+.competition{color:#718096;font-size:12px;margin-bottom:13px}
+.teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;font-weight:700}
 .team:last-child{text-align:right}
 .score{font-size:20px;text-align:center}
-.details{
-  display:flex;
-  justify-content:space-between;
-  margin-top:13px;
-  padding-top:11px;
-  border-top:1px solid #edf0f4;
-  color:#718096;
-  font-size:12px;
-}
+.details{display:flex;justify-content:space-between;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid #edf0f4;color:#718096;font-size:12px}
 .live{color:#e04444;font-weight:bold}
-.empty{
-  text-align:center;
-  padding:35px 15px;
-  background:white;
-  border-radius:12px;
-  color:#718096;
-}
-footer{
-  text-align:center;
-  padding:30px;
-  color:#94a3b8;
-  font-size:12px;
-}
+.empty{text-align:center;padding:35px 15px;background:white;border-radius:12px;color:#718096}
+footer{text-align:center;padding:30px;color:#94a3b8;font-size:12px}
 </style>
 </head>
-
 <body>
-
 <header>
  <div class="container">
   <div class="logo">Analisis<span>BetChile</span></div>
@@ -107,15 +37,13 @@ footer{
 </header>
 
 <main class="container">
-
- <nav id="sports">
+ <nav>
   <button class="active" data-sport="all">Todos</button>
   <button data-sport="football">Fútbol</button>
   <button data-sport="basketball">Básquetbol</button>
   <button data-sport="tennis">Tenis</button>
  </nav>
-
- <nav id="states">
+ <nav>
   <button class="active" data-state="all">Todos</button>
   <button data-state="live">En vivo</button>
   <button data-state="next">Próximos</button>
@@ -123,439 +51,153 @@ footer{
  </nav>
 
  <h2>Partidos</h2>
- <div class="status" id="connection">Conectando con los datos deportivos...</div>
+ <div class="status" id="connection">Conectando...</div>
  <div id="matches"></div>
-
  <button id="refresh">Actualizar partidos</button>
-
 </main>
 
-<footer>
- AnalisisBetChile · Información deportiva
-</footer>
+<footer>AnalisisBetChile · Información deportiva</footer>
 
 <script src="api.js"></script>
-
 <script>
 (function(){
+ let currentSport="all";
+ let currentState="all";
+ let data={football:[],basketball:[],tennis:[]};
+ let loading=false;
 
-let currentSport="all";
-let currentState="all";
-let data={football:[],basketball:[],tennis:[]};
-let loading=false;
+ const output=document.getElementById("matches");
+ const connection=document.getElementById("connection");
 
-const output=document.getElementById("matches");
-const connection=document.getElementById("connection");
+ function get(obj,keys){
+  for(const key of keys){
+   const v=obj?.[key];
+   if(v!==undefined && v!==null){
+    if(typeof v==="object") return v.name || v.title || v.shortName || "";
+    return v;
+   }
+  }
+  return "";
+ }
 
-function value(obj,keys){
- for(const key of keys){
-  if(obj && obj[key]!==undefined && obj[key]!==null){
-   const v=obj[key];
-   if(typeof v==="object") return v.name || v.title || v.shortName || "";
-   return v;
+ function safe(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+ }
+
+ function statusOf(m){
+  const s=String(get(m,[
+   "status","state","status_text","statusText","match_status"
+  ])).toLowerCase();
+
+  if(/live|in.?play|playing|1st half|2nd half|half|quarter|set|progress/.test(s)) return "live";
+  if(/finished|full.?time|ended|complete|final/.test(s)) return "done";
+  return "next";
+ }
+
+ function card(m,sport){
+  const home=get(m,["home_team","homeTeam","home","team1","participant1"]);
+  const away=get(m,["away_team","awayTeam","away","team2","participant2"]);
+  const hs=get(m,["home_score","homeScore","scoreHome"]);
+  const as=get(m,["away_score","awayScore","scoreAway"]);
+  const league=get(m,["competition","league","tournament","category"]);
+  const date=get(m,["time","startTime","start_time","date","datetime"]);
+  const state=statusOf(m);
+
+  let time="";
+  if(date){
+   const d=new Date(date);
+   time=isNaN(d.getTime())?date:d.toLocaleString("es-CL",{dateStyle:"short",timeStyle:"short"});
+  }
+
+  const score=(hs!=="" || as!=="") ? `${hs} - ${as}` : "VS";
+  const stateText=get(m,["status_text","statusText"]) ||
+   (state==="live"?"EN VIVO":state==="done"?"FINALIZADO":"PRÓXIMO");
+
+  return `<article class="match">
+   <div class="competition">${safe(league || sport.toUpperCase())}</div>
+   <div class="teams">
+    <div class="team">${safe(home || "Local")}</div>
+    <div class="score">${safe(score)}</div>
+    <div class="team">${safe(away || "Visitante")}</div>
+   </div>
+   <div class="details">
+    <span class="${state==="live"?"live":""}">
+     ${state==="live"?"● ":""}${safe(stateText)}
+    </span>
+    <span>${safe(time)}</span>
+   </div>
+  </article>`;
+ }
+
+ function render(){
+  let list=[];
+  const sports=currentSport==="all"?Object.keys(data):[currentSport];
+
+  sports.forEach(s=>{
+   (data[s]||[]).forEach(m=>{
+    if(currentState==="all" || statusOf(m)===currentState){
+     list.push({match:m,sport:s});
+    }
+   });
+  });
+
+  const order={live:0,next:1,done:2};
+  list.sort((a,b)=>order[statusOf(a.match)]-order[statusOf(b.match)]);
+
+  output.innerHTML=list.length
+   ?list.map(x=>card(x.match,x.sport)).join("")
+   :'<div class="empty">No hay partidos para este filtro.</div>';
+ }
+
+ async function loadAll(){
+  if(loading)return;
+  loading=true;
+  const refresh=document.getElementById("refresh");
+  refresh.disabled=true;
+  connection.textContent="Actualizando partidos...";
+
+  try{
+   const result=await window.AnalisisbetAPI.getAllMatches();
+   data={
+    football:Array.isArray(result.football)?result.football:[],
+    basketball:Array.isArray(result.basketball)?result.basketball:[],
+    tennis:Array.isArray(result.tennis)?result.tennis:[]
+   };
+
+   const total=data.football.length+data.basketball.length+data.tennis.length;
+   connection.textContent=`Conexión realizada: ${total} partidos recibidos.`;
+   render();
+  }catch(error){
+   connection.textContent="Error al cargar los partidos.";
+   output.innerHTML='<div class="empty">No se pudo conectar con los datos deportivos.</div>';
+  }finally{
+   loading=false;
+   refresh.disabled=false;
   }
  }
- return "";
-}
 
-function statusOf(m){
- const s=String(value(m,["status","state","statusText","match_status"])).toLowerCase();
- if(/live|in.?play|playing|1h|2h|half|quarter|set|progress/.test(s))return "live";
- if(/finished|full.?time|ft|ended|complete|final/.test(s))return "done";
- return "next";
-}
-
-function card(m,sport){
- const home=value(m,["homeTeam","home_team","home","team1","participant1"]);
- const away=value(m,["awayTeam","away_team","away","team2","participant2"]);
- const homeScore=value(m,["homeScore","home_score","scoreHome","score_home"]);
- const awayScore=value(m,["awayScore","away_score","scoreAway","score_away"]);
- const competition=value(m,["competition","league","tournament","category"]);
- const date=value(m,["startTime","start_time","date","datetime","timestamp"]);
- const state=statusOf(m);
- const score=(homeScore!=="" || awayScore!=="")
-  ? `${homeScore} - ${awayScore}` : "VS";
-
- let time="";
- if(date){
-  const d=new Date(date);
-  time=isNaN(d.getTime())?String(date):d.toLocaleString("es-CL",{dateStyle:"short",timeStyle:"short"});
- }
-
- return `
- <article class="match">
-  <div class="competition">${competition || sport.toUpperCase()}</div>
-  <div class="teams">
-   <div class="team">${home || "Local"}</div>
-   <div class="score">${score}</div>
-   <div class="team">${away || "Visitante"}</div>
-  </div>
-  <div class="details">
-   <span class="${state==="live"?"live":""}">
-    ${state==="live"?"● EN VIVO":state==="done"?"FINALIZADO":"PRÓXIMO"}
-   </span>
-   <span>${time}</span>
-  </div>
- </article>`;
-}
-
-function render(){
- let list=[];
- const sports=currentSport==="all"?Object.keys(data):[currentSport];
-
- sports.forEach(s=>{
-  (data[s]||[]).forEach(m=>{
-   if(currentState==="all" || statusOf(m)===currentState){
-    list.push({match:m,sport:s});
-   }
+ document.querySelectorAll("[data-sport]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   currentSport=btn.dataset.sport;
+   document.querySelectorAll("[data-sport]").forEach(x=>x.classList.toggle("active",x===btn));
+   render();
   });
  });
 
- list.sort((a,b)=>{
-  const order={live:0,next:1,done:2};
-  return order[statusOf(a.match)]-order[statusOf(b.match)];
+ document.querySelectorAll("[data-state]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+   currentState=btn.dataset.state;
+   document.querySelectorAll("[data-state]").forEach(x=>x.classList.toggle("active",x===btn));
+   render();
+  });
  });
 
- if(!list.length){
-  output.innerHTML='<div class="empty">No hay partidos disponibles para este filtro.</div>';
-  return;
- }
-
- output.innerHTML=list.map(x=>card(x.match,x.sport)).join("");
-}
-
-async function loadAll(){
- if(loading)return;
- loading=true;
- document.getElementById("refresh").disabled=true;
- connection.textContent="Actualizando partidos...";
-
- try{
-  const result=await window.AnalisisbetAPI.getAllMatches();
-  data={
-   football:Array.isArray(result.football)?result.football:[],
-   basketball:Array.isArray(result.basketball)?result.basketball:[],
-   tennis:Array.isArray(result.tennis)?result.tennis:[]
-  };
-
-  const total=data.football.length+data.basketball.length+data.tennis.length;
-  connection.textContent=total
-   ? "Conexión realizada. "+total+" partidos recibidos."
-   : "Conexión realizada, pero no hay partidos disponibles en este momento.";
-
-  render();
- }catch(error){
-  connection.textContent="No se pudieron cargar los partidos. Intenta actualizar.";
-  output.innerHTML='<div class="empty">Error al conectar con los datos deportivos.</div>';
- }
-
- loading=false;
- document.getElementById("refresh").disabled=false;
-}
-
-document.querySelectorAll("[data-sport]").forEach(btn=>{
- btn.addEventListener("click",()=>{
-  currentSport=btn.dataset.sport;
-  document.querySelectorAll("[data-sport]").forEach(x=>x.classList.toggle("active",x===btn));
-  render();
- });
-});
-
-document.querySelectorAll("[data-state]").forEach(btn=>{
- btn.addEventListener("click",()=>{
-  currentState=btn.dataset.state;
-  document.querySelectorAll("[data-state]").forEach(x=>x.classList.toggle("active",x===btn));
-  render();
- });
-});
-
-document.getElementById("refresh").addEventListener("click",loadAll);
-
-loadAll();
-setInterval(loadAll,60000);
-
+ document.getElementById("refresh").addEventListener("click",loadAll);
+ loadAll();
+ setInterval(loadAll,60000);
 })();
 </script>
 </body>
 </html>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
-<title>AnalisisBetChile | Deportes</title>
-
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f7fa;
-  color:#182230;
-}
-header{
-  background:white;
-  padding:20px;
-  border-bottom:1px solid #e5e9ef;
-}
-.container{max-width:1050px;margin:auto;padding:0 16px}
-.logo{font-size:25px;font-weight:800;color:#1677df}
-.logo span{color:#172b4d}
-.subtitle{color:#718096;font-size:13px;margin-top:5px}
-nav{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  padding:18px 0;
-}
-button{
-  border:1px solid #dce3eb;
-  background:white;
-  color:#44546a;
-  padding:10px 17px;
-  border-radius:9px;
-  font-weight:600;
-  cursor:pointer;
-  white-space:nowrap;
-}
-button.active{background:#1677df;color:white;border-color:#1677df}
-h2{font-size:19px;margin:12px 0}
-.status{
-  background:white;
-  padding:13px;
-  border-radius:10px;
-  color:#64748b;
-  font-size:13px;
-  margin-bottom:15px;
-}
-.match{
-  background:white;
-  border:1px solid #e7ebf0;
-  border-radius:12px;
-  padding:16px;
-  margin-bottom:11px;
-}
-.competition{
-  color:#718096;
-  font-size:12px;
-  margin-bottom:13px;
-}
-.teams{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:12px;
-  font-weight:700;
-}
-.team:last-child{text-align:right}
-.score{font-size:20px;text-align:center}
-.details{
-  display:flex;
-  justify-content:space-between;
-  margin-top:13px;
-  padding-top:11px;
-  border-top:1px solid #edf0f4;
-  color:#718096;
-  font-size:12px;
-}
-.live{color:#e04444;font-weight:bold}
-.empty{
-  text-align:center;
-  padding:35px 15px;
-  background:white;
-  border-radius:12px;
-  color:#718096;
-}
-footer{
-  text-align:center;
-  padding:30px;
-  color:#94a3b8;
-  font-size:12px;
-}
-</style>
-</head>
-
-<body>
-
-<header>
- <div class="container">
-  <div class="logo">Analisis<span>BetChile</span></div>
-  <div class="subtitle">Resultados, partidos y estadísticas deportivas</div>
- </div>
-</header>
-
-<main class="container">
-
- <nav id="sports">
-  <button class="active" data-sport="all">Todos</button>
-  <button data-sport="football">Fútbol</button>
-  <button data-sport="basketball">Básquetbol</button>
-  <button data-sport="tennis">Tenis</button>
- </nav>
-
- <nav id="states">
-  <button class="active" data-state="all">Todos</button>
-  <button data-state="live">En vivo</button>
-  <button data-state="next">Próximos</button>
-  <button data-state="done">Finalizados</button>
- </nav>
-
- <h2>Partidos</h2>
- <div class="status" id="connection">Conectando con los datos deportivos...</div>
- <div id="matches"></div>
-
- <button id="refresh">Actualizar partidos</button>
-
-</main>
-
-<footer>
- AnalisisBetChile · Información deportiva
-</footer>
-
-<script src="api.js"></script>
-
-<script>
-(function(){
-
-let currentSport="all";
-let currentState="all";
-let data={football:[],basketball:[],tennis:[]};
-let loading=false;
-
-const output=document.getElementById("matches");
-const connection=document.getElementById("connection");
-
-function value(obj,keys){
- for(const key of keys){
-  if(obj && obj[key]!==undefined && obj[key]!==null){
-   const v=obj[key];
-   if(typeof v==="object") return v.name || v.title || v.shortName || "";
-   return v;
-  }
- }
- return "";
-}
-
-function statusOf(m){
- const s=String(value(m,["status","state","statusText","match_status"])).toLowerCase();
- if(/live|in.?play|playing|1h|2h|half|quarter|set|progress/.test(s))return "live";
- if(/finished|full.?time|ft|ended|complete|final/.test(s))return "done";
- return "next";
-}
-
-function card(m,sport){
- const home=value(m,["homeTeam","home_team","home","team1","participant1"]);
- const away=value(m,["awayTeam","away_team","away","team2","participant2"]);
- const homeScore=value(m,["homeScore","home_score","scoreHome","score_home"]);
- const awayScore=value(m,["awayScore","away_score","scoreAway","score_away"]);
- const competition=value(m,["competition","league","tournament","category"]);
- const date=value(m,["startTime","start_time","date","datetime","timestamp"]);
- const state=statusOf(m);
- const score=(homeScore!=="" || awayScore!=="")
-  ? `${homeScore} - ${awayScore}` : "VS";
-
- let time="";
- if(date){
-  const d=new Date(date);
-  time=isNaN(d.getTime())?String(date):d.toLocaleString("es-CL",{dateStyle:"short",timeStyle:"short"});
- }
-
- return `
- <article class="match">
-  <div class="competition">${competition || sport.toUpperCase()}</div>
-  <div class="teams">
-   <div class="team">${home || "Local"}</div>
-   <div class="score">${score}</div>
-   <div class="team">${away || "Visitante"}</div>
-  </div>
-  <div class="details">
-   <span class="${state==="live"?"live":""}">
-    ${state==="live"?"● EN VIVO":state==="done"?"FINALIZADO":"PRÓXIMO"}
-   </span>
-   <span>${time}</span>
-  </div>
- </article>`;
-}
-
-function render(){
- let list=[];
- const sports=currentSport==="all"?Object.keys(data):[currentSport];
-
- sports.forEach(s=>{
-  (data[s]||[]).forEach(m=>{
-   if(currentState==="all" || statusOf(m)===currentState){
-    list.push({match:m,sport:s});
-   }
-  });
- });
-
- list.sort((a,b)=>{
-  const order={live:0,next:1,done:2};
-  return order[statusOf(a.match)]-order[statusOf(b.match)];
- });
-
- if(!list.length){
-  output.innerHTML='<div class="empty">No hay partidos disponibles para este filtro.</div>';
-  return;
- }
-
- output.innerHTML=list.map(x=>card(x.match,x.sport)).join("");
-}
-
-async function loadAll(){
- if(loading)return;
- loading=true;
- document.getElementById("refresh").disabled=true;
- connection.textContent="Actualizando partidos...";
-
- try{
-  const result=await window.AnalisisbetAPI.getAllMatches();
-  data={
-   football:Array.isArray(result.football)?result.football:[],
-   basketball:Array.isArray(result.basketball)?result.basketball:[],
-   tennis:Array.isArray(result.tennis)?result.tennis:[]
-  };
-
-  const total=data.football.length+data.basketball.length+data.tennis.length;
-  connection.textContent=total
-   ? "Conexión realizada. "+total+" partidos recibidos."
-   : "Conexión realizada, pero no hay partidos disponibles en este momento.";
-
-  render();
- }catch(error){
-  connection.textContent="No se pudieron cargar los partidos. Intenta actualizar.";
-  output.innerHTML='<div class="empty">Error al conectar con los datos deportivos.</div>';
- }
-
- loading=false;
- document.getElementById("refresh").disabled=false;
-}
-
-document.querySelectorAll("[data-sport]").forEach(btn=>{
- btn.addEventListener("click",()=>{
-  currentSport=btn.dataset.sport;
-  document.querySelectorAll("[data-sport]").forEach(x=>x.classList.toggle("active",x===btn));
-  render();
- });
-});
-
-document.querySelectorAll("[data-state]").forEach(btn=>{
- btn.addEventListener("click",()=>{
-  currentState=btn.dataset.state;
-  document.querySelectorAll("[data-state]").forEach(x=>x.classList.toggle("active",x===btn));
-  render();
- });
-});
-
-document.getElementById("refresh").addEventListener("click",loadAll);
-
-loadAll();
-setInterval(loadAll,60000);
-
-})();
-</script>
-</body>
-</html>
-
