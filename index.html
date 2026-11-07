@@ -125,7 +125,45 @@ function card(m,sport){
  </article>`;
 }
 
+
+let visibleCount = 20;
+
 function render(){
+ let list=[];
+ const selected=sports.filter(s=>selectedSport==="all"||s===selectedSport);
+
+ selected.forEach(s=>{
+  (data[s]||[]).forEach(m=>{
+   if(selectedState==="all"||state(m)===selectedState){
+    list.push({m,s});
+   }
+  });
+ });
+
+ list.sort((a,b)=>{
+  const order={live:0,next:1,done:2};
+  return order[state(a.m)]-order[state(b.m)];
+ });
+
+ const shown=list.slice(0,visibleCount);
+
+ document.getElementById("matches").innerHTML=
+  (shown.length
+   ?shown.map(x=>card(x.m,x.s)).join("")
+   :'<div class="empty">No hay partidos disponibles.</div>')+
+  (list.length>visibleCount
+   ?`<button id="more" style="width:100%;margin:12px 0">Mostrar otros 20 partidos (${list.length-visibleCount} restantes)</button>`
+   :"");
+
+ const more=document.getElementById("more");
+ if(more){
+  more.onclick=()=>{
+   visibleCount+=20;
+   render();
+  };
+ }
+}
+{
  let list=[];
  const selected=sports.filter(s=>selectedSport==="all"||s===selectedSport);
 
