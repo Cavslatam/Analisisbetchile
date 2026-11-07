@@ -1,18 +1,300 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analisisbetchile</title>
+<title>AnalisisBetChile</title>
 <style>
-:root {
-  --bg:#080b0a;
-  --panel:#111714;
-  --panel2:#18221c;
-  --green:#b5f52b;
-  --text:#f4f7f2;
-  --muted:#89958c;
-  --line:#29352d;
+:root{--bg:#080b0a;--panel:#111714;--green:#b5ff35;--muted:#89948d;--line:#26312a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#f4f7f4;font-family:Arial,sans-serif}
+header{padding:22px 16px;background:#0d120f;border-bottom:1px solid var(--line)}
+h1{margin:0;color:var(--green);font-size:25px}
+header p{margin:6px 0 0;color:var(--muted);font-size:13px}
+main{max-width:900px;margin:auto;padding:16px}
+.tabs,.filters{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+button,select,input,textarea{font:inherit}
+button{background:#1b251e;color:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:9px;cursor:pointer}
+button.active,.primary{background:var(--green);color:#10150d;border-color:var(--green);font-weight:bold}
+.match{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;margin:10px 0;cursor:pointer}
+.match:hover{border-color:var(--green)}
+.matchtop,.teams,.scoreline{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.muted{color:var(--muted);font-size:12px}
+.teams{margin:15px 0;font-weight:bold}
+.score{font-size:24px;color:var(--green);font-weight:bold}
+.tag{font-size:11px;color:var(--green)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;margin:12px 0}
+h2{font-size:19px;margin:8px 0 14px}
+h3{font-size:15px;margin:18px 0 10px;color:var(--green)}
+input,select,textarea{width:100%;padding:11px;margin:5px 0 12px;background:#080d0a;color:white;border:1px solid var(--line);border-radius:8px}
+label{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{margin:14px 0}
+.stathead{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.bar{height:8px;background:#26312a;border-radius:8px;overflow:hidden;display:flex}
+.bar .home{background:var(--green)}
+.bar .away{background:#718078}
+.statvalues{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px}
+.hidden{display:none}
+.back{margin:5px 0 15px}
+.empty{text-align:center;padding:35px 10px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
+</style>
+</head>
+<body>
+<header>
+<h1>ANALISISBETCHILE</h1>
+<p>Resultados · Estadísticas · Competiciones</p>
+</header>
+<main>
+<div id="home">
+<div class="tabs">
+<button class="sport active" data-sport="Fútbol">⚽ Fútbol</button>
+<button class="sport" data-sport="Básquetbol">🏀 Básquetbol</button>
+<button class="sport" data-sport="Tenis">🎾 Tenis</button>
+</div>
+<div class="filters">
+<button class="filter active" data-filter="Todos">Todos</button>
+<button class="filter" data-filter="Próximo">Próximos</button>
+<button class="filter" data-filter="En vivo">En vivo</button>
+<button class="filter" data-filter="Finalizado">Finalizados</button>
+</div>
+<div id="matches"></div>
+<button class="primary" id="adminButton">⚙ Administrar partidos</button>
+</div>
+
+<div id="detail" class="hidden">
+<button class="back" id="backButton">← Volver a partidos</button>
+<div id="detailContent"></div>
+</div>
+
+<div id="admin" class="hidden">
+<button class="back" id="closeAdmin">← Volver</button>
+<div class="card">
+<h2>Agregar partido</h2>
+<label>Deporte</label>
+<select id="sportInput">
+<option>Fútbol</option><option>Básquetbol</option><option>Tenis</option>
+</select>
+<label>Equipo o jugador local</label>
+<input id="homeInput" placeholder="Ej: Colo Colo">
+<label>Equipo o jugador visitante</label>
+<input id="awayInput" placeholder="Ej: Universidad de Chile">
+<label>Competición</label>
+<input id="competitionInput" placeholder="Ej: Campeonato Nacional">
+<div class="grid">
+<div><label>Hora</label><input id="timeInput" placeholder="17:00"></div>
+<div><label>Estado</label>
+<select id="statusInput"><option>Próximo</option><option>En vivo</option><option>Finalizado</option></select></div>
+</div>
+<label>Marcador</label>
+<input id="scoreInput" placeholder="0 - 0">
+<button class="primary" id="addButton">Guardar partido</button>
+</div>
+
+<div class="card">
+<h2>Editar estadísticas de fútbol</h2>
+<p class="muted">Selecciona un partido de fútbol y completa los datos reales disponibles.</p>
+<label>Partido</label>
+<select id="editSelect"></select>
+<div class="grid">
+<div><label>Posesión local (%)</label><input id="posHome" type="number" min="0" max="100"></div>
+<div><label>Posesión visitante (%)</label><input id="posAway" type="number" min="0" max="100"></div>
+<div><label>Tiros totales local</label><input id="shotsHome" type="number" min="0"></div>
+<div><label>Tiros totales visitante</label><input id="shotsAway" type="number" min="0"></div>
+<div><label>Tiros al arco local</label><input id="targetHome" type="number" min="0"></div>
+<div><label>Tiros al arco visitante</label><input id="targetAway" type="number" min="0"></div>
+<div><label>Córners local</label><input id="cornersHome" type="number" min="0"></div>
+<div><label>Córners visitante</label><input id="cornersAway" type="number" min="0"></div>
+<div><label>Faltas local</label><input id="foulsHome" type="number" min="0"></div>
+<div><label>Faltas visitante</label><input id="foulsAway" type="number" min="0"></div>
+<div><label>Amarillas local</label><input id="yellowHome" type="number" min="0"></div>
+<div><label>Amarillas visitante</label><input id="yellowAway" type="number" min="0"></div>
+<div><label>Rojas local</label><input id="redHome" type="number" min="0"></div>
+<div><label>Rojas visitante</label><input id="redAway" type="number" min="0"></div>
+</div>
+<button class="primary" id="saveStats">Guardar estadísticas</button>
+</div>
+
+<div class="card">
+<h2>Importar y exportar</h2>
+<button id="exportButton">Exportar respaldo JSON</button>
+<label>Importar respaldo JSON</label>
+<textarea id="importText" rows="4" placeholder="Pega aquí un respaldo JSON"></textarea>
+<button id="importButton">Importar datos</button>
+</div>
+<div class="card">
+<h2>Eliminar partido</h2>
+<select id="deleteSelect"></select>
+<button id="deleteButton">Eliminar seleccionado</button>
+</div>
+</div>
+</main>
+<footer>AnalisisBetChile · Información deportiva</footer>
+
+<script>
+const STORAGE_KEY="abc_deportes_v2";
+let matches=[];
+let currentSport="Fútbol";
+let currentFilter="Todos";
+let selectedId=null;
+
+function load(){
+ try{
+ const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+ matches=Array.isArray(saved)?saved:[];
+ }catch(e){matches=[]}
+ matches=matches.map((m,i)=>({
+ ...m,
+ id:m.id||("partido_"+i+"_"+Date.now()),
+ sport:m.sport||"Fútbol",
+ home:m.home||"Local",
+ away:m.away||"Visitante",
+ status:m.status||"Próximo",
+ score:m.score||"-",
+ competition:m.competition||"",
+ time:m.time||"",
+ stats:m.stats&&typeof m.stats==="object"?m.stats:{}
+ }));
+}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(matches))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function show(id){["home","detail","admin"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden")}
+function render(){
+ const list=matches.filter(m=>m.sport===currentSport&&(currentFilter==="Todos"||m.status===currentFilter));
+ const box=document.getElementById("matches");
+ if(!list.length){box.innerHTML='<div class="empty">No hay partidos para mostrar.</div>';return}
+ box.innerHTML=list.map(m=>`
+ <div class="match" data-id="${esc(m.id)}">
+ <div class="matchtop"><span class="muted">${esc(m.competition)}</span><span class="tag">${esc(m.status)}</span></div>
+ <div class="teams"><span>${esc(m.home)}</span><span class="score">${esc(m.score)}</span><span>${esc(m.away)}</span></div>
+ <div class="muted">${esc(m.time)} · Toca para ver detalles</div>
+ </div>`).join("");
+ box.querySelectorAll(".match").forEach(el=>el.addEventListener("click",()=>openDetail(el.dataset.id)));
+}
+function statRow(label,a,b,percent=false){
+ if(a===undefined&&b===undefined)return "";
+ const x=Number(a)||0,y=Number(b)||0;
+ let left=x,right=y;
+ if(percent){left=Math.max(0,Math.min(100,x));right=Math.max(0,Math.min(100,y))}
+ const total=left+right;
+ const width=total?left/total*100:50;
+ return `<div class="stat">
+ <div class="stathead"><span>${esc(a??"—")}${percent?"%":""}</span><b>${label}</b><span>${esc(b??"—")}${percent?"%":""}</span></div>
+ <div class="bar"><div class="home" style="width:${width}%"></div><div class="away" style="width:${100-width}%"></div></div>
+ </div>`;
+}
+function openDetail(id){
+ const m=matches.find(x=>String(x.id)===String(id));if(!m)return;
+ selectedId=m.id;
+ let s=m.stats||{};
+ let html=`<div class="card">
+ <div class="muted">${esc(m.competition)} · ${esc(m.status)}</div>
+ <h2 style="text-align:center">${esc(m.home)} vs ${esc(m.away)}</h2>
+ <div class="scoreline"><b>${esc(m.home)}</b><span class="score">${esc(m.score)}</span><b>${esc(m.away)}</b></div>
+ <p class="muted" style="text-align:center">${esc(m.time)}</p>
+ </div>`;
+ if(m.sport==="Fútbol"){
+ html+=`<div class="card"><h2>Estadísticas del partido</h2>`;
+ const rows=[
+ ["Posesión","posHome","posAway",true],
+ ["Tiros totales","shotsHome","shotsAway"],
+ ["Tiros al arco","targetHome","targetAway"],
+ ["Córners","cornersHome","cornersAway"],
+ ["Faltas","foulsHome","foulsAway"],
+ ["Tarjetas amarillas","yellowHome","yellowAway"],
+ ["Tarjetas rojas","redHome","redAway"]
+ ];
+ let count=0;
+ rows.forEach(r=>{if(s[r[1]]!==undefined||s[r[2]]!==undefined){html+=statRow(r[0],s[r[1]],s[r[2]],r[3]);count++}});
+ if(!count)html+='<p class="muted">Todavía no se han cargado estadísticas para este partido.</p>';
+ html+="</div>";
+ }else{
+ html+=`<div class="card"><h2>Información del partido</h2><p class="muted">Las estadísticas de este deporte se podrán completar manualmente.</p></div>`;
+ }
+ document.getElementById("detailContent").innerHTML=html;
+ show("detail");
+}
+function refreshSelects(){
+ const football=matches.filter(m=>m.sport==="Fútbol");
+ const opts=football.map(m=>`<option value="${esc(m.id)}">${esc(m.home)} vs ${esc(m.away)}</option>`).join("");
+ document.getElementById("editSelect").innerHTML=opts;
+ document.getElementById("deleteSelect").innerHTML=matches.map(m=>`<option value="${esc(m.id)}">${esc(m.sport)}: ${esc(m.home)} vs ${esc(m.away)}</option>`).join("");
+ loadStatsEditor();
+}
+function loadStatsEditor(){
+ const id=document.getElementById("editSelect").value;
+ const m=matches.find(x=>String(x.id)===String(id));
+ const s=m?.stats||{};
+ const keys=["posHome","posAway","shotsHome","shotsAway","targetHome","targetAway","cornersHome","cornersAway","foulsHome","foulsAway","yellowHome","yellowAway","redHome","redAway"];
+ keys.forEach(k=>document.getElementById(k).value=s[k]??"");
+}
+document.querySelectorAll(".sport").forEach(b=>b.addEventListener("click",()=>{
+ currentSport=b.dataset.sport;
+ document.querySelectorAll(".sport").forEach(x=>x.classList.toggle("active",x===b));
+ render();
+}));
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
+ currentFilter=b.dataset.filter;
+ document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));
+ render();
+}));
+document.getElementById("adminButton").onclick=()=>{refreshSelects();show("admin")};
+document.getElementById("closeAdmin").onclick=()=>{show("home");render()};
+document.getElementById("backButton").onclick=()=>{show("home");render()};
+document.getElementById("addButton").onclick=()=>{
+ const home=document.getElementById("homeInput").value.trim();
+ const away=document.getElementById("awayInput").value.trim();
+ if(!home||!away){alert("Escribe los dos participantes.");return}
+ matches.push({
+ id:"p_"+Date.now(),
+ sport:document.getElementById("sportInput").value,
+ home,away,
+ competition:document.getElementById("competitionInput").value,
+ time:document.getElementById("timeInput").value,
+ status:document.getElementById("statusInput").value,
+ score:document.getElementById("scoreInput").value||"-",
+ stats:{}
+ });
+ save();refreshSelects();render();
+ ["homeInput","awayInput","competitionInput","timeInput","scoreInput"].forEach(id=>document.getElementById(id).value="");
+ alert("Partido guardado.");
+};
+document.getElementById("editSelect").onchange=loadStatsEditor;
+document.getElementById("saveStats").onclick=()=>{
+ const m=matches.find(x=>String(x.id)===String(document.getElementById("editSelect").value));
+ if(!m)return;
+ const keys=["posHome","posAway","shotsHome","shotsAway","targetHome","targetAway","cornersHome","cornersAway","foulsHome","foulsAway","yellowHome","yellowAway","redHome","redAway"];
+ m.stats=m.stats||{};
+ keys.forEach(k=>{const v=document.getElementById(k).value;if(v!=="")m.stats[k]=Number(v);else delete m.stats[k]});
+ save();alert("Estadísticas guardadas.");
+};
+document.getElementById("deleteButton").onclick=()=>{
+ const id=document.getElementById("deleteSelect").value;
+ if(!id)return;
+ if(!confirm("¿Seguro que quieres eliminar este partido?"))return;
+ matches=matches.filter(m=>String(m.id)!==String(id));
+ save();refreshSelects();render();
+};
+document.getElementById("exportButton").onclick=()=>{
+ const blob=new Blob([JSON.stringify(matches,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download="analisisbetchile-respaldo.json";a.click();
+ URL.revokeObjectURL(url);
+};
+document.getElementById("importButton").onclick=()=>{
+ try{
+ const data=JSON.parse(document.getElementById("importText").value);
+ if(!Array.isArray(data))throw new Error();
+ matches=data;save();refreshSelects();render();alert("Respaldo importado.");
+ }catch(e){alert("El JSON no es válido. Revisa el contenido.")}
+};
+load();render();
+</script>
+</body>
+</html>
+;
 }
 *{box-sizing:border-box}
 body{
