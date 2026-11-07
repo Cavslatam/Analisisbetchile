@@ -2,301 +2,558 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AnalisisBetChile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisisbetchile</title>
 <style>
-:root{--bg:#090d0a;--panel:#141b16;--green:#a3e635;--muted:#9aa69c;--line:#28352b}
+:root {
+  --bg:#080b0a;
+  --panel:#111714;
+  --panel2:#18221c;
+  --green:#b5f52b;
+  --text:#f4f7f2;
+  --muted:#89958c;
+  --line:#29352d;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#f5f7f5;font-family:Arial,sans-serif}
-header{padding:25px 16px;background:#101711;border-bottom:1px solid var(--line)}
-h1{margin:0;color:var(--green);font-size:27px}
-header p{color:var(--muted);margin:7px 0 0}
-nav{display:flex;gap:8px;padding:14px;overflow:auto}
-button{border:0;border-radius:9px;padding:11px 15px;background:#202a22;color:white;font-weight:bold;cursor:pointer}
-button.active{background:var(--green);color:#101510}
-main{padding:14px;max-width:850px;margin:auto}
-h2{font-size:20px}
-.panel,.match{background:var(--panel);border:1px solid var(--line);padding:15px;border-radius:13px;margin:12px 0}
-input,select,textarea{width:100%;padding:12px;margin:6px 0 12px;background:#0c120e;color:white;border:1px solid var(--line);border-radius:8px}
-label{font-size:13px;color:#bdc9bf}
-.primary{background:var(--green);color:#101510;width:100%;padding:14px}
-.secondary{background:#263329}
-.muted{color:var(--muted);font-size:13px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row>*{flex:1;min-width:0}
-.hidden{display:none}
-.teams{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:bold;margin:12px 0}
-.score{color:var(--green);font-size:20px}
-.tag{font-size:11px;color:var(--green);text-transform:uppercase}
-.match small{color:var(--muted)}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Arial,sans-serif;
+}
+header{
+  padding:22px 16px 15px;
+  background:#0d130f;border-bottom:1px solid var(--line);
+}
+.logo{font-size:24px;font-weight:900;letter-spacing:-1px}
+.logo span{color:var(--green)}
+.sub{color:var(--muted);font-size:12px;margin-top:5px}
+nav{
+  display:flex;gap:8px;padding:14px 12px;
+  overflow-x:auto;border-bottom:1px solid var(--line);
+}
+button{
+  cursor:pointer;border:0;font-weight:bold;
+}
+.tab,.filter{
+  padding:11px 17px;border-radius:9px;
+  background:var(--panel);color:var(--muted);
+  white-space:nowrap;
+}
+.tab.active,.filter.active{
+  background:var(--green);color:#10160c;
+}
+main{max-width:950px;margin:auto;padding:16px}
+.section-title{
+  font-size:18px;font-weight:800;margin:12px 0 15px;
+}
+.filters{display:flex;gap:8px;overflow-x:auto;margin-bottom:18px}
+.match-card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:15px;padding:16px;margin-bottom:12px;
+  cursor:pointer;transition:.2s;
+}
+.match-card:active{transform:scale(.99)}
+.match-card:hover{border-color:var(--green)}
+.comp{
+  color:var(--muted);font-size:11px;font-weight:bold;
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.match-top{display:flex;justify-content:space-between;gap:8px}
+.status{font-size:11px;color:var(--green);font-weight:bold}
+.teams{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;margin:20px 0 15px;
+}
+.team{text-align:center;font-weight:bold;font-size:14px}
+.team-name{margin-top:8px}
+.crest{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--panel2);display:grid;place-items:center;
+  margin:auto;color:var(--green);font-weight:900;font-size:19px;
+}
+.score{
+  text-align:center;font-size:23px;font-weight:900;
+  color:var(--green);margin-top:8px;
+}
+.card-bottom{
+  border-top:1px solid var(--line);padding-top:12px;
+  display:flex;justify-content:space-between;
+  color:var(--muted);font-size:12px;
+}
+.empty{
+  padding:35px 15px;text-align:center;
+  color:var(--muted);background:var(--panel);border-radius:14px;
+}
+.panel{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:15px;padding:16px;margin-bottom:15px;
+}
+input,select,textarea{
+  width:100%;padding:12px;margin:7px 0 13px;
+  border:1px solid var(--line);border-radius:9px;
+  background:#090e0b;color:white;font-size:14px;
+}
+textarea{min-height:120px;resize:vertical}
+label{font-size:12px;color:var(--muted);font-weight:bold}
+.primary{
+  background:var(--green);color:#10160c;
+  border-radius:9px;padding:13px 17px;width:100%;
+  font-weight:900;margin-top:5px;
+}
+.secondary{
+  background:var(--panel2);color:white;
+  border:1px solid var(--line);border-radius:9px;
+  padding:11px 14px;
+}
+.danger{background:#532323;color:white}
+.hidden{display:none!important}
+.detail-header{text-align:center;padding:20px 0}
+.detail-teams{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin:22px 0;
+}
+.detail-team{text-align:center;font-weight:bold}
+.detail-team .crest{width:65px;height:65px;font-size:23px}
+.detail-score{text-align:center;font-size:35px;font-weight:900;color:var(--green)}
+.detail-time{text-align:center;color:var(--muted);font-size:13px;margin-top:7px}
+.back{
+  background:var(--panel2);color:white;padding:10px 15px;
+  border-radius:9px;margin-bottom:15px;
+}
+.stat-table{width:100%;border-collapse:collapse;margin-top:10px}
+.stat-table th,.stat-table td{
+  padding:12px 8px;border-bottom:1px solid var(--line);
+  text-align:center;font-size:13px;
+}
+.stat-table th{color:var(--muted);font-weight:normal}
+.stat-table td:first-child{text-align:left;color:var(--muted)}
+.detail-section{margin-top:22px}
+.detail-section h3{font-size:15px}
+.info-line{
+  display:flex;justify-content:space-between;gap:10px;
+  padding:11px 0;border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+footer{
+  text-align:center;padding:25px;color:var(--muted);
+  font-size:11px;
+}
+@media(min-width:650px){
+  #matches{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .match-card{margin:0}
+}
 </style>
 </head>
 <body>
+
 <header>
-<h1>ANALISISBETCHILE</h1>
-<p>Resultados · Estadísticas · Clasificaciones</p>
+  <div class="logo">ANALISIS<span>BET</span>CHILE</div>
+  <div class="sub">RESULTADOS · ESTADÍSTICAS · DEPORTES</div>
 </header>
 
 <nav>
-<button class="active" data-sport="Fútbol">⚽ Fútbol</button>
-<button data-sport="Básquetbol">🏀 Básquetbol</button>
-<button data-sport="Tenis">🎾 Tenis</button>
+  <button class="tab active" data-sport="Fútbol">Fútbol</button>
+  <button class="tab" data-sport="Básquetbol">Básquetbol</button>
+  <button class="tab" data-sport="Tenis">Tenis</button>
 </nav>
 
 <main>
-<div class="row" id="filters">
-<button class="active" data-filter="Todos">Todos</button>
-<button data-filter="Próximo">Próximos</button>
-<button data-filter="En vivo">En vivo</button>
-<button data-filter="Finalizado">Finalizados</button>
-</div>
+  <section id="home">
+    <div class="section-title">Partidos</div>
+    <div class="filters">
+      <button class="filter active" data-filter="Todos">Todos</button>
+      <button class="filter" data-filter="Próximo">Próximos</button>
+      <button class="filter" data-filter="En vivo">En vivo</button>
+      <button class="filter" data-filter="Finalizado">Finalizados</button>
+    </div>
+    <div id="matches"></div>
+  </section>
 
-<h2 id="sportTitle">⚽ Partidos de fútbol</h2>
-<div id="matches"></div>
+  <section id="detail" class="hidden">
+    <button class="back" onclick="closeDetail()">← Volver a partidos</button>
+    <div id="detailContent"></div>
+  </section>
 
-<section class="panel">
-<h2>📊 Estadísticas y análisis</h2>
-<p class="muted">Información deportiva ingresada manualmente.</p>
-<div id="stats"></div>
-</section>
+  <section id="admin" class="hidden">
+    <div class="section-title">Administrar datos</div>
 
-<section class="panel">
-<h2>🏆 Clasificaciones</h2>
-<div id="rankings"></div>
-</section>
+    <div class="panel">
+      <h3>Agregar un partido</h3>
+      <label>Deporte</label>
+      <select id="newSport">
+        <option>Fútbol</option>
+        <option>Básquetbol</option>
+        <option>Tenis</option>
+      </select>
+      <label>Equipo o jugador 1</label>
+      <input id="newHome" placeholder="Nombre">
+      <label>Equipo o jugador 2</label>
+      <input id="newAway" placeholder="Nombre">
+      <label>Competición</label>
+      <input id="newCompetition" placeholder="Ej. Liga de Primera">
+      <label>Hora</label>
+      <input id="newTime" placeholder="Ej. 18:00">
+      <label>Estado</label>
+      <select id="newStatus">
+        <option>Próximo</option>
+        <option>En vivo</option>
+        <option>Finalizado</option>
+      </select>
+      <button class="primary" onclick="addMatch()">GUARDAR PARTIDO</button>
+    </div>
 
-<section class="panel">
-<h2>⚙️ Administrar datos</h2>
-<p class="muted">Agrega partidos individualmente o carga varios juntos.</p>
+    <div class="panel">
+      <h3>Cargar partidos del día</h3>
+      <label>Pega aquí los datos JSON</label>
+      <textarea id="jsonInput" placeholder='[{"sport":"Fútbol","home":"Equipo A","away":"Equipo B","time":"18:00","status":"Próximo","competition":"Liga","stats":{}}]'></textarea>
+      <button class="primary" onclick="loadJSON()">CARGAR PARTIDOS DEL DÍA</button>
+    </div>
 
-<h3>➕ Agregar partido</h3>
-<label>Deporte</label>
-<select id="sport">
-<option>Fútbol</option>
-<option>Básquetbol</option>
-<option>Tenis</option>
-</select>
+    <div class="panel">
+      <h3>Editar un partido</h3>
+      <label>Selecciona el partido</label>
+      <select id="editMatch" onchange="loadEditor()"></select>
+      <label>Marcador</label>
+      <input id="editScore" placeholder="Ej. 2 - 1">
+      <label>Estado</label>
+      <select id="editStatus">
+        <option>Próximo</option>
+        <option>En vivo</option>
+        <option>Finalizado</option>
+      </select>
+      <label>Estadísticas del partido</label>
+      <textarea id="editStats" placeholder="Posesión, remates, córners, faltas, últimos resultados, clasificación..."></textarea>
+      <button class="primary" onclick="saveEditor()">GUARDAR CAMBIOS</button>
+      <button class="secondary danger" style="width:100%;margin-top:12px" onclick="deleteMatch()">ELIMINAR PARTIDO SELECCIONADO</button>
+    </div>
 
-<label>Competición</label>
-<input id="league" placeholder="Ej: Premier League">
-<label>Equipo o jugador 1</label>
-<input id="home" placeholder="Local / Jugador 1">
-<label>Equipo o jugador 2</label>
-<input id="away" placeholder="Visitante / Jugador 2">
+    <div class="panel">
+      <h3>Respaldo de datos</h3>
+      <button class="secondary" style="width:100%" onclick="exportData()">EXPORTAR PARTIDOS</button>
+      <label>Importar respaldo JSON</label>
+      <input type="file" id="importFile" accept=".json">
+      <button class="secondary" style="width:100%" onclick="importData()">IMPORTAR RESPALDO</button>
+      <p style="color:var(--muted);font-size:11px">Guarda una copia de tus partidos antes de hacer cambios importantes.</p>
+    </div>
+  </section>
 
-<div class="row">
-<div><label>Fecha</label><input id="date" type="date"></div>
-<div><label>Hora</label><input id="time" type="time"></div>
-</div>
-
-<div class="row">
-<div><label>Marcador</label><input id="score" placeholder="Ej: 2-1"></div>
-<div>
-<label>Estado</label>
-<select id="status">
-<option>Próximo</option>
-<option>En vivo</option>
-<option>Finalizado</option>
-</select>
-</div>
-</div>
-
-<button class="primary" id="add">AGREGAR PARTIDO</button>
-
-<hr style="border-color:var(--line);margin:22px 0">
-
-<h3>🚀 Cargar partidos del día</h3>
-<p class="muted">Pega la lista de partidos que preparemos. Se agregarán todos juntos.</p>
-<textarea id="bulk" rows="7" placeholder='[
- {"sport":"Fútbol","league":"Premier League","home":"Equipo A","away":"Equipo B","date":"2026-11-07","time":"17:00","status":"Próximo"}
-]'></textarea>
-
-<button class="primary" id="bulkAdd">CARGAR PARTIDOS DEL DÍA</button>
-
-<hr style="border-color:var(--line);margin:22px 0">
-
-<h3>📝 Estadísticas y clasificaciones</h3>
-<label>Estadísticas / análisis</label>
-<textarea id="statsInput" rows="4" placeholder="Escribe aquí estadísticas y análisis..."></textarea>
-<button class="secondary" id="saveStats">Guardar estadísticas</button>
-
-<label>Clasificaciones</label>
-<textarea id="rankInput" rows="4" placeholder="Escribe aquí tablas y rankings..."></textarea>
-<button class="secondary" id="saveRanks">Guardar clasificaciones</button>
-
-<hr style="border-color:var(--line);margin:22px 0">
-
-<button class="secondary" id="export">Exportar respaldo</button>
-<button class="secondary" id="importBtn">Importar respaldo</button>
-<input type="file" id="file" accept=".json" class="hidden">
-<button class="secondary" id="clear">Borrar datos de este dispositivo</button>
-
-<p class="muted">Los datos se guardan en este navegador. Para publicarlos para todos los visitantes, hay que actualizar también los datos del sitio en GitHub.</p>
-</section>
+  <div style="margin-top:25px">
+    <button class="secondary" style="width:100%" onclick="toggleAdmin()">⚙ ADMINISTRAR DATOS</button>
+  </div>
 </main>
 
+<footer>ANALISISBETCHILE · INFORMACIÓN DEPORTIVA</footer>
+
 <script>
-const KEY="abc_deportes_v2";
-let data={matches:[],stats:"",rankings:""};
-let sport="Fútbol",filter="Todos";
+const STORAGE_KEY = "abc_deportes_v2";
 
-try{
- const saved=JSON.parse(localStorage.getItem(KEY));
- if(saved)data={...data,...saved};
-}catch(e){}
+let matches = [];
+let currentSport = "Fútbol";
+let currentFilter = "Todos";
 
-const $=id=>document.getElementById(id);
-
-function save(){
- localStorage.setItem(KEY,JSON.stringify(data));
- render();
+function readSaved(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return [];
+    const data = JSON.parse(raw);
+    if(Array.isArray(data)) return data;
+    if(data && Array.isArray(data.matches)) return data.matches;
+    return [];
+  }catch(e){
+    return [];
+  }
 }
 
-function esc(v){
- return String(v??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
+matches = readSaved().map(normalizeMatch);
+
+function normalizeMatch(m){
+  return {
+    id: m.id || (Date.now().toString(36)+Math.random().toString(36).slice(2,7)),
+    sport: m.sport || "Fútbol",
+    home: m.home || "Equipo 1",
+    away: m.away || "Equipo 2",
+    time: m.time || "",
+    status: m.status || "Próximo",
+    score: m.score || "",
+    competition: m.competition || "Sin competición",
+    stats: m.stats || {},
+    statsText: m.statsText || ""
+  };
+}
+
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(matches));
+}
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function initials(name){
+  return String(name || "?").trim().slice(0,1).toUpperCase();
 }
 
 function render(){
- $("sportTitle").textContent=({
- "Fútbol":"⚽ Partidos de fútbol",
- "Básquetbol":"🏀 Partidos de básquetbol",
- "Tenis":"🎾 Partidos de tenis"
- })[sport];
-
- const list=data.matches.filter(m=>
- m.sport===sport&&(filter==="Todos"||m.status===filter)
- );
-
- $("matches").innerHTML=list.length?list.map(m=>`
- <article class="match">
- <div class="tag">${esc(m.league||sport)} · ${esc(m.status||"Próximo")}</div>
- <div class="teams">
- <span>${esc(m.home)}</span>
- <span class="score">${esc(m.score||"VS")}</span>
- <span>${esc(m.away)}</span>
- </div>
- <small>${esc(m.date||"Fecha por definir")} · ${esc(m.time||"Hora por definir")}</small>
- </article>
- `).join(""):'<p class="muted">Todavía no hay partidos cargados en esta sección.</p>';
-
- $("stats").textContent=data.stats||"Todavía no hay estadísticas cargadas.";
- $("rankings").textContent=data.rankings||"Todavía no hay clasificaciones cargadas.";
-}
-
-document.querySelectorAll("[data-sport]").forEach(b=>{
- b.onclick=()=>{
-  sport=b.dataset.sport;
-  document.querySelectorAll("[data-sport]").forEach(x=>x.classList.toggle("active",x===b));
-  render();
- };
-});
-
-document.querySelectorAll("[data-filter]").forEach(b=>{
- b.onclick=()=>{
-  filter=b.dataset.filter;
-  document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));
-  render();
- };
-});
-
-$("add").onclick=()=>{
- const m={
-  sport:$("sport").value,
-  league:$("league").value,
-  home:$("home").value,
-  away:$("away").value,
-  date:$("date").value,
-  time:$("time").value,
-  score:$("score").value,
-  status:$("status").value
- };
-
- if(!m.home.trim()||!m.away.trim()){
-  alert("Completa los dos equipos o jugadores.");
-  return;
- }
-
- data.matches.push(m);
- save();
-
- ["league","home","away","date","time","score"].forEach(id=>$(id).value="");
- alert("¡Partido agregado!");
-};
-
-$("bulkAdd").onclick=()=>{
- try{
-  const arr=JSON.parse($("bulk").value);
-
-  if(!Array.isArray(arr)||!arr.length)throw Error();
-
-  const valid=arr.filter(m=>
-   m.home&&m.away&&
-   ["Fútbol","Básquetbol","Tenis"].includes(m.sport)
+  const list = matches.filter(m=>
+    m.sport === currentSport &&
+    (currentFilter === "Todos" || m.status === currentFilter)
   );
 
-  if(!valid.length)throw Error();
+  const container=document.getElementById("matches");
 
-  data.matches.push(...valid.map(m=>({
-   ...m,
-   status:m.status||"Próximo"
-  })));
+  if(!list.length){
+    container.innerHTML='<div class="empty">No hay partidos en esta categoría.</div>';
+    return;
+  }
 
-  $("bulk").value="";
+  container.innerHTML=list.map(m=>`
+    <article class="match-card" onclick="openDetail('${m.id}')">
+      <div class="match-top">
+        <span class="comp">${esc(m.competition)}</span>
+        <span class="status">${esc(m.status)}</span>
+      </div>
+      <div class="teams">
+        <div class="team">
+          <div class="crest">${esc(initials(m.home))}</div>
+          <div class="team-name">${esc(m.home)}</div>
+        </div>
+        <div class="team">
+          <div class="crest">${esc(initials(m.away))}</div>
+          <div class="team-name">${esc(m.away)}</div>
+        </div>
+      </div>
+      <div class="score">${esc(m.score || (m.status==="Finalizado" ? "Final" : "VS"))}</div>
+      <div class="card-bottom">
+        <span>${esc(m.time || "Horario pendiente")}</span>
+        <span>VER FICHA →</span>
+      </div>
+    </article>
+  `).join("");
+}
+
+function showSport(sport){
+  currentSport=sport;
+  document.querySelectorAll(".tab").forEach(b=>
+    b.classList.toggle("active",b.dataset.sport===sport)
+  );
+  closeDetail();
+  render();
+}
+
+function setFilter(filter){
+  currentFilter=filter;
+  document.querySelectorAll(".filter").forEach(b=>
+    b.classList.toggle("active",b.dataset.filter===filter)
+  );
+  render();
+}
+
+document.querySelectorAll(".tab").forEach(b=>
+  b.addEventListener("click",()=>showSport(b.dataset.sport))
+);
+document.querySelectorAll(".filter").forEach(b=>
+  b.addEventListener("click",()=>setFilter(b.dataset.filter))
+);
+
+function statsHTML(m){
+  let rows="";
+  if(m.stats && typeof m.stats==="object" && !Array.isArray(m.stats)){
+    rows=Object.entries(m.stats).map(([k,v])=>`
+      <tr><td>${esc(k)}</td><td colspan="2">${esc(v)}</td></tr>
+    `).join("");
+  }
+
+  if(!rows && !m.statsText){
+    return '<p style="color:var(--muted);font-size:13px">Todavía no hay estadísticas registradas para este partido.</p>';
+  }
+
+  return `
+    ${rows ? `<table class="stat-table"><tbody>${rows}</tbody></table>` : ""}
+    ${m.statsText ? `<div style="white-space:pre-wrap;line-height:1.7;font-size:13px;margin-top:12px">${esc(m.statsText)}</div>` : ""}
+  `;
+}
+
+function openDetail(id){
+  const m=matches.find(x=>x.id===id);
+  if(!m)return;
+
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("detail").classList.remove("hidden");
+
+  document.getElementById("detailContent").innerHTML=`
+    <div class="panel">
+      <div class="detail-header">
+        <div class="comp">${esc(m.competition)}</div>
+        <div class="status" style="margin-top:10px">${esc(m.status)}</div>
+        <div class="detail-teams">
+          <div class="detail-team">
+            <div class="crest">${esc(initials(m.home))}</div>
+            <div style="margin-top:10px">${esc(m.home)}</div>
+          </div>
+          <div class="detail-team">
+            <div class="crest">${esc(initials(m.away))}</div>
+            <div style="margin-top:10px">${esc(m.away)}</div>
+          </div>
+        </div>
+        <div class="detail-score">${esc(m.score || "VS")}</div>
+        <div class="detail-time">${esc(m.time || "Horario pendiente")}</div>
+      </div>
+    </div>
+
+    <div class="panel detail-section">
+      <h3>ESTADÍSTICAS DEL PARTIDO</h3>
+      ${statsHTML(m)}
+    </div>
+
+    <div class="panel detail-section">
+      <h3>INFORMACIÓN DEL ENCUENTRO</h3>
+      <div class="info-line"><span>Deporte</span><strong>${esc(m.sport)}</strong></div>
+      <div class="info-line"><span>Competición</span><strong>${esc(m.competition)}</strong></div>
+      <div class="info-line"><span>Estado</span><strong>${esc(m.status)}</strong></div>
+    </div>
+
+    <button class="primary" onclick="editFromDetail('${m.id}')">EDITAR ESTADÍSTICAS</button>
+  `;
+  window.scrollTo(0,0);
+}
+
+function closeDetail(){
+  document.getElementById("detail").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+  render();
+}
+
+function addMatch(){
+  const home=document.getElementById("newHome").value.trim();
+  const away=document.getElementById("newAway").value.trim();
+  if(!home || !away){
+    alert("Escribe los dos equipos o jugadores.");
+    return;
+  }
+
+  matches.unshift(normalizeMatch({
+    sport:document.getElementById("newSport").value,
+    home,away,
+    competition:document.getElementById("newCompetition").value || "Sin competición",
+    time:document.getElementById("newTime").value,
+    status:document.getElementById("newStatus").value
+  }));
+
   save();
-  alert("¡Se cargaron "+valid.length+" partidos!");
+  render();
+  refreshEditor();
+  alert("Partido guardado correctamente.");
+  ["newHome","newAway","newCompetition","newTime"].forEach(id=>
+    document.getElementById(id).value=""
+  );
+}
 
- }catch(e){
-  alert("Revisa el formato de la lista JSON.");
- }
-};
+function loadJSON(){
+  try{
+    const data=JSON.parse(document.getElementById("jsonInput").value);
+    if(!Array.isArray(data)) throw new Error("El contenido debe ser una lista.");
+    const valid=data.filter(m=>m && m.home && m.away);
+    if(!valid.length) throw new Error("No encontré partidos válidos.");
+    matches.push(...valid.map(normalizeMatch));
+    save();
+    render();
+    refreshEditor();
+    document.getElementById("jsonInput").value="";
+    alert("¡Cargados "+valid.length+" partidos correctamente!");
+  }catch(e){
+    alert("Error en los datos: "+e.message);
+  }
+}
 
-$("saveStats").onclick=()=>{
- data.stats=$("statsInput").value;
- save();
- alert("Estadísticas guardadas.");
-};
+function refreshEditor(){
+  const select=document.getElementById("editMatch");
+  select.innerHTML=matches.map(m=>
+    `<option value="${esc(m.id)}">${esc(m.home)} vs ${esc(m.away)} (${esc(m.sport)})</option>`
+  ).join("");
+  loadEditor();
+}
 
-$("saveRanks").onclick=()=>{
- data.rankings=$("rankInput").value;
- save();
- alert("Clasificaciones guardadas.");
-};
+function loadEditor(){
+  const m=matches.find(x=>x.id===document.getElementById("editMatch").value);
+  if(!m)return;
+  document.getElementById("editScore").value=m.score || "";
+  document.getElementById("editStatus").value=m.status || "Próximo";
+  let text=m.statsText || "";
+  if(m.stats && typeof m.stats==="object" && Object.keys(m.stats).length){
+    text+=Object.entries(m.stats).map(([k,v])=>k+": "+v).join("\n");
+  }
+  document.getElementById("editStats").value=text;
+}
 
-$("export").onclick=()=>{
- const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
- const a=document.createElement("a");
- a.href=URL.createObjectURL(blob);
- a.download="analisisbetchile-respaldo.json";
- a.click();
- URL.revokeObjectURL(a.href);
-};
-
-$("importBtn").onclick=()=>$("file").click();
-
-$("file").onchange=async e=>{
- try{
-  const obj=JSON.parse(await e.target.files[0].text());
-  if(!Array.isArray(obj.matches))throw Error();
-  data={...data,...obj};
+function saveEditor(){
+  const m=matches.find(x=>x.id===document.getElementById("editMatch").value);
+  if(!m){alert("Selecciona un partido.");return;}
+  m.score=document.getElementById("editScore").value;
+  m.status=document.getElementById("editStatus").value;
+  m.statsText=document.getElementById("editStats").value;
+  m.stats={};
   save();
-  alert("Respaldo importado.");
- }catch(e){
-  alert("No se pudo importar ese archivo.");
- }
-};
+  render();
+  alert("Cambios guardados.");
+}
 
-$("clear").onclick=()=>{
- if(confirm("¿Borrar todos los datos guardados en este navegador?")){
-  data={matches:[],stats:"",rankings:""};
+function deleteMatch(){
+  const id=document.getElementById("editMatch").value;
+  const m=matches.find(x=>x.id===id);
+  if(!m)return;
+  if(!confirm("¿Seguro que quieres eliminar "+m.home+" vs "+m.away+"?"))return;
+  matches=matches.filter(x=>x.id!==id);
   save();
- }
-};
+  render();
+  refreshEditor();
+  alert("Partido eliminado.");
+}
 
-$("statsInput").value=data.stats;
-$("rankInput").value=data.rankings;
+function editFromDetail(id){
+  closeDetail();
+  toggleAdmin(true);
+  document.getElementById("editMatch").value=id;
+  loadEditor();
+  document.getElementById("admin").scrollIntoView();
+}
+
+function toggleAdmin(force){
+  const admin=document.getElementById("admin");
+  const open=force===true || admin.classList.contains("hidden");
+  admin.classList.toggle("hidden",!open);
+  if(open)refreshEditor();
+  if(open)admin.scrollIntoView({behavior:"smooth"});
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(matches,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="analisisbetchile-respaldo.json";a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(){
+  const file=document.getElementById("importFile").files[0];
+  if(!file){alert("Selecciona un archivo JSON.");return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!Array.isArray(data))throw new Error("El archivo no contiene una lista.");
+      if(!confirm("Esto reemplazará los partidos actuales. ¿Continuar?"))return;
+      matches=data.map(normalizeMatch);
+      save();render();refreshEditor();
+      alert("Respaldo importado correctamente.");
+    }catch(e){alert("No se pudo importar: "+e.message);}
+  };
+  reader.readAsText(file);
+}
+
 render();
+refreshEditor();
 </script>
 </body>
 </html>
