@@ -213,9 +213,18 @@ async function load(){
  render();
  refresh.disabled=false;
 }
+ document.querySelectorAll("[data-state]").forEach(b=>{
+  b.onclick=()=>{
+    selectedState=b.dataset.state;
+    visibleCount=20;
 
-document.querySelectorAll("[data-sport]").forEach(b=>{
- b.onclick=()=>{
+    document.querySelectorAll("[data-state]").forEach(x=>{
+      x.classList.toggle("active",x===b);
+    });
+
+    render();
+  };
+});
   selectedSport=b.dataset.sport;
   document.querySelectorAll("[data-sport]").forEach(x=>x.classList.toggle("active",x===b));
   render();
