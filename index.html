@@ -268,5 +268,55 @@ document.querySelectorAll("#sports button").forEach(button => {
 
 render();
   <!-- ADMINISTRAR DATOS -->
+    <section style="background:#111714;color:white;padding:20px;border:1px solid #b7ff36;border-radius:12px;margin:20px">
+<h2 style="color:#b7ff36">⚙ ADMINISTRAR DATOS</h2>
+<p>Panel de administración de AnalisisBetChile</p>
+
+<label>Deporte</label>
+<select id="deporte">
+<option>Fútbol</option>
+<option>Básquetbol</option>
+<option>Tenis</option>
+</select>
+
+<label>Partido</label>
+<input id="partido" placeholder="Ej: Colo Colo vs Universidad de Chile">
+
+<label>Resultado</label>
+<input id="resultado" placeholder="Ej: 2 - 1">
+
+<button onclick="guardarPartido()" style="background:#b7ff36;padding:12px;border:0;border-radius:8px">
+Guardar partido
+</button>
+
+<div id="partidosGuardados"></div>
+</section>
+
+<script>
+function guardarPartido(){
+ const partido=document.getElementById("partido").value;
+ const resultado=document.getElementById("resultado").value;
+ const deporte=document.getElementById("deporte").value;
+
+ if(!partido.trim() || !resultado.trim()){
+  alert("Completa el partido y el resultado");
+  return;
+ }
+
+ const datos=JSON.parse(localStorage.getItem("partidosABC")||"[]");
+ datos.push({partido,resultado,deporte});
+ localStorage.setItem("partidosABC",JSON.stringify(datos));
+ mostrarPartidos();
+ document.getElementById("partido").value="";
+ document.getElementById("resultado").value="";
+}
+
+function mostrarPartidos(){
+ const datos=JSON.parse(localStorage.getItem("partidosABC")||"[]");
+ document.getElementById("partidosGuardados").innerHTML=
+ datos.map(x=>`<p>${x.deporte}: ${x.partido} — ${x.resultado}</p>`).join("");
+}
+mostrarPartidos();
 </script>
+    </script>
 </body>
